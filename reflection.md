@@ -47,8 +47,12 @@ It helped me design that test I just described. I understood the concept of what
 ## 4. What did you learn about Streamlit and state?
 
 - In your own words, explain why the secret number kept changing in the original app.
+The secret number kept changing because the ranges were messed up in the original app. Also the session state wouldn't update properly at times.
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+I would explain it as your current temporary progress you have in a video game before refreshing and losing your progress.
 - What change did you make that finally gave the game a stable secret number?
+Fixed the get range for difficulty function which controlled the ranges for each game difficulty, this helped the secret number stay within the proper range.
+
 
 ---
 

@@ -25,13 +25,13 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [The point of the game is to guess the right number before you run out of guesses] Describe the game's purpose.
+- [I found several bugs, some of which include no correct answer being present, the ranges being mixed up, and the session state being messed up when trying to start a new game.] Detail which bugs you found.
+- [I fixed the ranges to make them accurate to the game difficulty, I fixed the session bugs, I made sure the secret was possible to guess in each of the game difficulties, I fixed the error where the enter button wasn't submitting a guess, and I made sure that the hints were accurate.] Explain what fixes you applied.
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+- [![alt text](image.png)] [Insert a screenshot of your fixed, winning game here]
 
 ## 🚀 Stretch Features
 
