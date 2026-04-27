@@ -124,3 +124,6 @@ What did not work as expected: the original goal was for the AI to be strictly m
 This project taught me that AI is very good at following instructions. The `strategy.txt` file is essentially a specification, and the agent executes it perfectly every time. But "following instructions perfectly" is not the same as "being better than humans." A human can guess randomly and win on the first try. The agent never will, because it always starts from the midpoint.
 
 That gap — between optimal strategy and unpredictable outcome — is something I did not expect going in. It changed how I think about AI systems: they are powerful tools for enforcing consistent, well-defined behavior, but they operate within the same constraints of uncertainty that everything else does. When the input is random, even a perfect algorithm cannot guarantee a perfect result.
+
+## Loom Walkthrough Link:
+https://www.loom.com/share/ac961de819b140b9af4dd948d8bcdb5c
