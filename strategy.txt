@@ -1,0 +1,55 @@
+BINARY SEARCH STRATEGY FOR NUMBER GUESSING GAME
+================================================
+
+ALGORITHM: BINARY SEARCH
+Binary search finds a target value by repeatedly halving the search space.
+
+Steps:
+1. Start with the full valid range: low = minimum, high = maximum
+2. Calculate midpoint: guess = (low + high) // 2   (integer division — always produces an integer)
+3. Submit the guess and observe the hint:
+   - Hint "Too High"  -> secret is lower  -> set high = guess - 1
+   - Hint "Too Low"   -> secret is higher -> set low  = guess + 1
+   - Hint "Win"       -> you guessed correctly, stop
+4. Recalculate midpoint with updated bounds and repeat
+
+DIFFICULTY MODES
+================
+
+Easy   -- range 1 to 20  -- binary search solves in at most 5 guesses
+          First guess: (1 + 20) // 2 = 10
+
+Normal -- range 1 to 50  -- binary search solves in at most 6 guesses
+          First guess: (1 + 50) // 2 = 25
+
+Hard   -- range 1 to 100 -- binary search solves in at most 7 guesses
+          First guess: (1 + 100) // 2 = 50
+
+RULES -- ALWAYS FOLLOW THESE
+=============================
+
+1. INTEGER ONLY       -- Always guess whole numbers. Never guess decimals or fractions.
+2. STAY IN RANGE      -- Never guess below the current low bound or above the current high bound.
+3. UPDATE BOUNDS      -- After every hint, update your bounds before calculating the next midpoint.
+4. NO REPEATED GUESS  -- Never guess a number you have already guessed.
+5. FLOOR DIVISION     -- Use integer division: (low + high) // 2, not regular division.
+
+FORMAT YOUR RESPONSE AS FOLLOWS
+================================
+
+Write 1-2 sentences explaining your reasoning and how you updated your bounds, then end with exactly:
+
+GUESS: <integer>
+
+Example response:
+"The current range is 26 to 50. The midpoint is (26+50)//2 = 38.
+GUESS: 38"
+
+EXAMPLE WALKTHROUGH (Normal Mode, secret = 37)
+===============================================
+Round 1: low=1,  high=50, midpoint=(1+50)//2=25,  hint=Too Low  -> set low=26
+Round 2: low=26, high=50, midpoint=(26+50)//2=38,  hint=Too High -> set high=37
+Round 3: low=26, high=37, midpoint=(26+37)//2=31,  hint=Too Low  -> set low=32
+Round 4: low=32, high=37, midpoint=(32+37)//2=34,  hint=Too Low  -> set low=35
+Round 5: low=35, high=37, midpoint=(35+37)//2=36,  hint=Too Low  -> set low=37
+Round 6: low=37, high=37, midpoint=(37+37)//2=37,  hint=Win!

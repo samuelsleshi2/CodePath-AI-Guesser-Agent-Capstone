@@ -10,11 +10,7 @@ def get_range_for_difficulty(difficulty: str):
 
 
 def parse_guess(raw: str):
-    """
-    Parse user input into an int guess.
-
-    Returns: (ok: bool, guess_int: int | None, error_message: str | None)
-    """
+    """Return (ok, int_value, error) from raw user input string."""
     if raw is None:
         return False, None, "Enter a guess."
 
@@ -33,19 +29,7 @@ def parse_guess(raw: str):
 
 
 def check_guess(guess, secret, low=None, high=None):
-    """
-    Compare guess to secret and return (outcome, message).
-
-    outcome examples: "Win", "Too High", "Too Low"
-    
-    Args:
-        guess: The guessed number
-        secret: The secret number to match
-        low: Lower bound of valid range (optional, for validation)
-        high: Upper bound of valid range (optional, for validation)
-    """
-    # FIX: Added boundary checking with Copilot Agent mode
-    # Check if guess is outside valid range
+    """Compare guess to secret and return (outcome, message)."""
     if low is not None and guess < low:
         return "Out of Range", f"📍 Your guess is too low for this range ({low}-{high})."
     if high is not None and guess > high:
@@ -54,18 +38,9 @@ def check_guess(guess, secret, low=None, high=None):
     if guess == secret:
         return "Win", "🎉 Correct!"
 
-    try:
-        if guess > secret:
-            return "Too High", "📈 Go LOWER!"
-        else:
-            return "Too Low", "📉 Go HIGHER!"
-    except TypeError:
-        g = str(guess)
-        if g == secret:
-            return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go LOWER!"
-        return "Too Low", "📉 Go HIGHER!"
+    if guess > secret:
+        return "Too High", "📈 Go LOWER!"
+    return "Too Low", "📉 Go HIGHER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):

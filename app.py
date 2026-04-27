@@ -1,18 +1,17 @@
 import random
 import streamlit as st
-
-# FIX: Refactored all game logic into logic_utils.py using Copilot Agent mode
 from logic_utils import (
     get_range_for_difficulty,
     parse_guess,
     check_guess,
     update_score,
 )
+from ai_agent import run_full_agent_game
 
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
-st.title("🎮 Game Glitch Investigator")
-st.caption("An AI-generated guessing game. Something is off.")
+st.title("🎮 Guessing Game")
+st.caption("An AI-powered guessing game.")
 
 st.sidebar.header("Settings")
 
@@ -29,7 +28,6 @@ attempt_limit_map = {
 }
 attempt_limit = attempt_limit_map[difficulty]
 
-# FIX: Dynamic range based on difficulty with Copilot Agent mode
 low, high = get_range_for_difficulty(difficulty)
 
 st.sidebar.caption(f"Range: {low} to {high}")
@@ -41,10 +39,10 @@ if "secret" not in st.session_state:
 if "previous_difficulty" not in st.session_state:
     st.session_state.previous_difficulty = difficulty
 
-# FIX: Reset secret when difficulty changes using Copilot Agent mode
 if difficulty != st.session_state.previous_difficulty:
     st.session_state.secret = random.randint(low, high)
     st.session_state.previous_difficulty = difficulty
+    st.session_state.agent_results = []
 
 if "attempts" not in st.session_state:
     st.session_state.attempts = 1
@@ -58,13 +56,8 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
-st.subheader("Make a guess")
-
-# FIX: Dynamic range hint with Copilot Agent mode, replaced hardcoded "1 to 100"
-st.info(
-    f"Guess a number between {low} and {high}. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
-)
+if "agent_results" not in st.session_state:
+    st.session_state.agent_results = []
 
 with st.expander("Developer Debug Info"):
     st.write("Secret:", st.session_state.secret)
@@ -73,24 +66,67 @@ with st.expander("Developer Debug Info"):
     st.write("Difficulty:", difficulty)
     st.write("History:", st.session_state.history)
 
-# FIX: Use st.form() with form_submit_button, used Copilot ask mode to explain the concept
-with st.form("guess_form", clear_on_submit=True):
-    raw_guess = st.text_input(
-        "Enter your guess:",
-    )
-    show_hint = st.checkbox("Show hint", value=True)
-    submit = st.form_submit_button("Submit Guess 🚀")
-
+# --- New Game ---
 new_game = st.button("New Game 🔁")
 
 if new_game:
     st.session_state.attempts = 0
-    # FIX: Use current difficulty range for new game. Used Copilot Agent mode
     st.session_state.secret = random.randint(low, high)
     st.session_state.status = "playing"
     st.session_state.history = []
+    st.session_state.agent_results = []
     st.success("New game started.")
     st.rerun()
+
+# --- AI Agent Section ---
+st.divider()
+st.subheader("🤖 AI Agent")
+st.caption("Let the AI solve the game automatically using binary search and the strategy guide.")
+
+let_ai_play = st.button(
+    "Let AI Play 🤖",
+    disabled=st.session_state.status != "playing",
+    help="AI uses binary search guided by strategy.txt to guess the secret number.",
+)
+
+if let_ai_play and st.session_state.status == "playing":
+    with st.spinner("AI agent is thinking..."):
+        try:
+            results = run_full_agent_game(st.session_state.secret, difficulty)
+            st.session_state.agent_results = results
+            if results and results[-1]["outcome"] == "Win":
+                st.session_state.status = "won"
+        except Exception as e:
+            st.error(f"Agent error: {e}")
+
+if st.session_state.agent_results:
+    results = st.session_state.agent_results
+    won = results[-1]["outcome"] == "Win"
+
+    if won:
+        st.success(f"AI solved it in {len(results)} guess(es)!")
+    else:
+        st.warning("AI did not find the number within the guess cap.")
+
+    st.markdown("**Round-by-round reasoning:**")
+    for i, step in enumerate(results):
+        label = f"Round {i + 1} — Guessed {step['guess']} → {step['outcome']}"
+        with st.expander(label):
+            st.markdown(step["reasoning"])
+
+    st.markdown("**Full Guess History**")
+    header = st.columns([1, 2, 4])
+    header[0].markdown("**Round**")
+    header[1].markdown("**Guess**")
+    header[2].markdown("**Result**")
+    for i, step in enumerate(results):
+        row = st.columns([1, 2, 4])
+        row[0].write(i + 1)
+        row[1].write(step["guess"])
+        row[2].write(step["hint"])
+
+# --- Status gate: blocks manual play after win/loss ---
+st.divider()
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
@@ -98,6 +134,19 @@ if st.session_state.status != "playing":
     else:
         st.error("Game over. Start a new game to try again.")
     st.stop()
+
+# --- Manual Play Section ---
+st.subheader("Make a guess")
+
+st.info(
+    f"Guess a number between {low} and {high}. "
+    f"Attempts left: {attempt_limit - st.session_state.attempts}"
+)
+
+with st.form("guess_form", clear_on_submit=True):
+    raw_guess = st.text_input("Enter your guess:")
+    show_hint = st.checkbox("Show hint", value=True)
+    submit = st.form_submit_button("Submit Guess 🚀")
 
 if submit:
     st.session_state.attempts += 1
@@ -111,8 +160,6 @@ if submit:
         st.session_state.history.append(guess_int)
 
         secret = st.session_state.secret
-
-        # FIX: Passed range bounds to prevent out of bounds guesses with Copilot Agent mode
         outcome, message = check_guess(guess_int, secret, low, high)
 
         if show_hint:
